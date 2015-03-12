@@ -32,7 +32,7 @@ class pytor:
 	_ip = None
 	_connected = False
 	browser = None
-	
+
 	try:
 		torControl = Controller.from_port(port=controlPort)
 		_connected = True
@@ -47,11 +47,16 @@ class pytor:
 		else:
 			print "### ERROR: Could not establish a Tor connection!"
 		return
-		
-	def get(self, url):		
+
+	def get(self, url):
 		self._checkIdentityTime()
-		request = urllib2.Request(url)
-		request.add_header('Cache-Control','max-age=0')
+		hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+		request = urllib2.Request(url, headers=hdr)
 		response = urllib2.urlopen(request)
 		self._last_result = response.read()
 		self._last_request = url
@@ -83,12 +88,11 @@ class pytor:
 				print 'Getting new identity'
 				self.newIdentity()
 		return
-		
+
 	def identityTime(self, time = 600):
 		self._id_time = time
 		return
-		
+
 	def mechanizeBrowser(self):
 		self.browser = mechanize.Browser()
 		return self.browser
-
